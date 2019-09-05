@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/20 08:06:08 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/02 12:07:07 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/05 12:49:08 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include "get_next_line.h"
+# include <stdarg.h>
 
 typedef struct			s_list
 {
@@ -91,4 +92,5 @@ char					*ft_ifalloc(int isneg, int size);
 int						ft_max_wordlen(const char *s, char c);
 char					*ft_strtimc(const char *s, char c);
 char					*ft_strndup(const char *s, size_t n);
+int						print_form(char *form, ...);
 #endif

@@ -6,13 +6,15 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 08:14:07 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/04 12:34:08 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/05 14:29:46 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "shell.h"
 
 char	**prep_env_vec(char **sys_vec);
 
+// i need to change the structure of my program to better traverse the input
+// vector.
 int main(int ac, char **av, char **sys_env)
 {
 	char *out;
@@ -24,11 +26,6 @@ int main(int ac, char **av, char **sys_env)
 	// so as to run them once.
 	env = prep_env_vec(sys_env);
 	ret = 0;
-	while (env[ret] != NULL)
-	{
-		ft_putendl(env[ret]);
-		ret++;
-	}
 	while (1)
 	{
 		ft_putstr(PROMPT);		// this value can be put into a PSI macro.
@@ -36,19 +33,25 @@ int main(int ac, char **av, char **sys_env)
 		if (ft_strcmp(out, "exit") == 0)
 			break;
 		input_split = ft_strsplit(out, ' ');
+		if (*input_split != NULL && valid_env_var(*input_split) == 1)
+		{
+			set_env(env, *input_split);
+			input_split++;
+		}
 		if (*input_split == NULL)
 			continue;
 		if (parse_command(input_split, env) == -1)
 		{
-			ft_putendl("Error");
+			// take this to a function that handles the error displaying.
+			print_form("shell: %s does not exist\n", *input_split);
 		}
 		while (*input_split != NULL)
 			free(*input_split++);
 	}
 	int i = 0;
+	print_env(env);
 	while(env[i] != NULL)
 	{
-		ft_putendl(env[i]);
 		free(env[i++]);
 	}
 }

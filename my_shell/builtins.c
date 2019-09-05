@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 10:31:40 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/04 12:34:10 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/05 14:29:52 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int		parse_command(char **av, char **env)
 		return (-1);
 	}
 	else
-		exec[i](av + 1, env);
+		exec[i](env, av + 1);
 	return (0);
 }
 
@@ -42,7 +42,9 @@ void	prep_commands(char **av)
 	av[0] = "echo";
 	av[1] = "cd";
 	av[2] = "pwd";
-	av[3] = NULL;
+	av[3] = "env";
+	av[4] = "unset";
+	av[5] = NULL;
 }
 
 void	builtin_functions(functions *exec)
@@ -50,9 +52,11 @@ void	builtin_functions(functions *exec)
 	exec[0] = &echo; 
 	exec[1] = &cd;
 	exec[2] = &pwd;
+	exec[3] = &environment;
+	exec[4] = &unset_env_var;
 }
 
-void	cd(char **av, char **env)
+void	cd(char **env, char **av)
 {
 	// This is where the argument count could be put.
 	int i;
@@ -80,7 +84,7 @@ void	cd(char **av, char **env)
 	free(pwd);
 }
 
-void	echo(char **av, char **env)
+void	echo(char **env, char **av)
 {
 	while (*av != NULL)
 	{
@@ -91,7 +95,7 @@ void	echo(char **av, char **env)
 	puts("");
 }
 
-void	pwd(char **av, char **env)
+void	pwd(char **env, char **av)
 {
 	char cwd[255];
 	// This is where the argument count loop or function might go.

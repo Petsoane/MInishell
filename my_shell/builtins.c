@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 10:31:40 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/11 12:18:30 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/11 13:12:07 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ int		parse_command(char **av, char **env)
 	int i;
 
 	i = 0;
-	/* prep_commands(commands); */
-	/* builtin_functions(exec); */
 	if (env_var_pos(env, BUILTS) == -1)
 	{
 		prep_commands(commands);

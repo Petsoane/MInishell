@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/04 07:08:54 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/05 14:29:50 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/09 15:12:39 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ int env_var_pos(char **env, char *var_name)
 
 char	*env_var_value(char **env, char *var_name)
 {
-	char *out;
-	int ac;
+	char	*out;
+	int		ret;
 
-	ac = 32;
-	out = ft_strdup(env[env_var_pos(env, var_name)] + ft_strlen(var_name) + 1);
+	ret = env_var_pos(env, var_name);
+	out = ret != -1 ? ft_strdup(env[ret] + ft_strlen(var_name) + 1) : NULL;
 	return (out);
 }
 
@@ -71,10 +71,11 @@ void	set_env_var(char **env, char *var_name, char *val)
 	}
 	else
 	{
-		int env_c;
-		env_c = env_var_count(env);
-		env[env_c] = new_env_var;
-		env[env_c + 1] = NULL;
+		pos = env_var_count(env);
+		tmp = env[pos];
+		env[pos] = new_env_var;
+		env[pos + 1] = NULL;
+		free(tmp);
 	}
 }
 

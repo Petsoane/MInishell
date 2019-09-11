@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 10:31:40 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/05 14:29:52 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/11 12:18:30 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,19 @@
 
 int		parse_command(char **av, char **env)
 {
-	char *commands[COMMANDS];
-	functions exec[FUNCTIONS];
+	static char *commands[COMMANDS];
+	static functions exec[FUNCTIONS];
 	int i;
 
 	i = 0;
-	prep_commands(commands);
-	builtin_functions(exec);
+	/* prep_commands(commands); */
+	/* builtin_functions(exec); */
+	if (env_var_pos(env, BUILTS) == -1)
+	{
+		prep_commands(commands);
+		builtin_functions(exec);
+		add_var_builtins(env, commands);
+	}
 	// Argument count can be put here.
 	while (i < FUNCTIONS)
 	{
@@ -37,6 +43,27 @@ int		parse_command(char **av, char **env)
 	return (0);
 }
 
+void	add_var_builtins(char **env, char **commands)
+{
+	int i;
+	char *path;
+	char *tmp;
+
+	path = ft_strdup(commands[0]);
+	i = 1;
+	while (commands[i] != NULL)
+	{
+		tmp = path;
+		path = ft_strjoin(tmp, ":");
+		free(tmp);
+		tmp = path;
+		path = ft_strjoin(tmp, commands[i]);
+		free(tmp);
+		i++;
+	}
+	set_env_var(env, BUILTS, path);
+	free(path);
+}
 void	prep_commands(char **av)
 {
 	av[0] = "echo";
@@ -44,7 +71,8 @@ void	prep_commands(char **av)
 	av[2] = "pwd";
 	av[3] = "env";
 	av[4] = "unset";
-	av[5] = NULL;
+	av[5] = "which";
+	av[6] = NULL;
 }
 
 void	builtin_functions(functions *exec)
@@ -54,6 +82,49 @@ void	builtin_functions(functions *exec)
 	exec[2] = &pwd;
 	exec[3] = &environment;
 	exec[4] = &unset_env_var;
+	exec[5] = &which;
+}
+
+void	which(char **env, char **av)
+{
+	int ac;
+	int i;
+	char *path;
+	char *var_value;
+	char **split;
+
+	ac = env_var_count(av);
+	if (ac != 0)
+	{
+		i = 0;
+		var_value = env_var_value(env, BUILTS);
+		split = ft_strsplit(var_value, ':');
+		while (i != ac)
+		{
+			if (is_builtins(env, av[i], split) == 1)
+				print_form("%s: shell builtin command\n");
+			else if ((path = get_bin_path(env_var_value(env, "PATH"), av[i])) != NULL)
+			{
+				ft_putendl(path);
+				free(path);
+			}
+			i++;
+		}
+		while (*split != NULL)
+			free(*split++);
+		free(var_value);
+	}
+}
+
+int		is_builtins(char **env, char *command, char **split)
+{
+	while (*split != NULL)
+	{
+		if (ft_strcmp(*split, command) == 0)
+			return (1);
+		split++;
+	}
+	return (0);
 }
 
 void	cd(char **env, char **av)

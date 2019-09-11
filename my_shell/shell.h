@@ -6,16 +6,19 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 12:07:21 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/05 14:29:56 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/09 12:52:55 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SHELL_H
 # define SHELL_H
-# define COMMANDS 6
+# define COMMANDS 7
 # define FUNCTIONS COMMANDS - 1
 # define PROMPT "$>"
+# define BUILTS "BUILTINFUNC"
 # include "libft/libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
 
 typedef void (*functions)();
 
@@ -34,5 +37,12 @@ void	set_env(char **env, char *new_var);
 int		valid_env_var(char *new_var);
 int		env_var_count(char **env);
 void	unset_env_var(char **env, char **av);
+char	**get_input(char **env);
+char	*get_bin_path(char *path_var, char *bin_name);
+void	child_process(char **argv, char **env, char *bin_path);
+void	run_bin(char **argv, char **env);
+void	which(char **env, char **argv);
+void	add_var_builtins(char **env, char **commands);
+int		is_builtins(char **env, char *command, char **split);
 
 #endif

@@ -6,18 +6,19 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 08:27:18 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/05 14:08:48 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/11 10:27:23 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "libft/libft.h"
+# include <signal.h>
 
 typedef void (*functions)();
 void	echo(char **av, char **env);
 void	cd(char **av, char **env);
 void	pwd(char **av, char **env);
-char	**get_input(void);
+char	**get_input(char **env);
 int		env_var_position(char **env, char *variable_name);
 char	*env_var_value(char **env, char *variable_name);
 char	**prep_env_vec(char **sys_env, int ac);
@@ -27,6 +28,22 @@ int		valid_env_var(char *new_var);
 void	set_env(char **env, char *new_var);
 void	unset_env_var(char **av, char **env);
 void	set_env_var(char **env, char *var_name, char *var_val);
+char	*which(char *command, char *path_var);
+
+// Create a function to free all the NULL terminated vectors.
+// Also create a set of functions to handle the errors.
+// add The variable interpolation to the shell functions get_input.
+
+void	handle_sigint(int sig)
+{
+	ft_putstr("\b \b\b \n$>");
+	signal(SIGINT, handle_sigint);
+}
+
+void	handle_childkill(int i)
+{
+	ft_putstr("\n");
+}
 
 int main(int arr_c, char **av, char **sys_env)
 {
@@ -36,8 +53,10 @@ int main(int arr_c, char **av, char **sys_env)
 	functions exec[5];
 	char **env;
 
+	signal(SIGINT, handle_childkill);
+
 	exec[0] = &echo;
-	exec[1] = &cd;
+	exec[1] = &cd;;
 	exec[2] = &pwd;
 	exec[3] = &environment;
 	exec[4] = &unset_env_var;
@@ -48,12 +67,13 @@ int main(int arr_c, char **av, char **sys_env)
 	commands[4] = "unset";
 	commands[5] = NULL;
 
+
 	while (sys_env[ac] != NULL)
 		ac++;	// This can be renamed envc
 	env = prep_env_vec(sys_env, ac);	
     while (1)
     {
-		input_split = get_input(); 
+		input_split = get_input(env); 
 		if (*input_split == NULL)
 			continue;
 		if (ft_strcmp(*input_split, "exit") == 0)
@@ -74,11 +94,30 @@ int main(int arr_c, char **av, char **sys_env)
 			}
 			if (commands[i] == NULL)
 			{
-				print_form("shell: %s does not exist", *input_split);
+				char *bin_path;
+				if ((bin_path = which(input_split[0], env_var_value(env, "PATH"))) != NULL)
+				{
+					int pid = fork();
+
+					if (pid == 0)
+					{
+						/* signal(SIGINT, handle_childkill); */
+						execve(bin_path, input_split, env);
+						return (0);
+					}
+
+					wait(NULL);
+				}
+				else
+					ft_putendl("The command does not exist");
 			}
 			else
 			{
 				exec[i](input_split + 1, env);
+			}
+			while (*input_split != NULL)
+			{
+				free(*input_split++);
 			}
 		}
 	}
@@ -89,6 +128,32 @@ int main(int arr_c, char **av, char **sys_env)
 		free(env[i++]);
 	}
 	return (0);
+}
+
+char	*which(char *command, char *path_var)
+{
+	char **paths;
+	char *out;
+	char *tmp;
+
+	out = NULL;
+	paths = ft_strsplit(path_var, ':');
+	while (*paths != NULL)
+	{
+		out = ft_strdup(*paths);
+		tmp = out;
+		out = ft_strjoin(out, "/");
+		free(tmp);
+		// add the command name
+		tmp = out;
+		out = ft_strjoin(out, command);
+		free(tmp);
+		if (access(out, F_OK) == 0)
+			return (out);
+		free(out);
+		paths++;
+	}
+	return (NULL);
 }
 
 void	unset_env_var(char **av, char **env)
@@ -252,8 +317,10 @@ char	*env_var_value(char **env, char *variable_name)
 	char *out;
 	int pos;
 
+	out = NULL;
 	pos = env_var_position(env, variable_name);
-	out = ft_strdup(env[pos] + ft_strlen(variable_name) + 1);
+	if (pos != -1)
+		out = ft_strdup(env[pos] + ft_strlen(variable_name) + 1);
 	return (out);
 }
 
@@ -273,15 +340,33 @@ int		env_var_position(char **env, char *variable_name)
 }
 
 // This is where all the cool input tricks will processed.
-char	**get_input()
+char	**get_input(char **env)
 {
 	char **input_split;
 	char *input;
 	int ret;
 
+	signal(SIGINT, handle_sigint);
+
 	ft_putstr("$>");
 	ret = get_next_line(1, &input);
 	input_split = ft_strsplit(input, ' ');
+	// check for any variable that are in the input
+	int i = 0;
+	char *var_value;
+	char *tmp;
+	while (input_split[i] != NULL)
+	{
+		if (input_split[i][0] == '$' && input_split[i][1] != ' ')
+		{
+			tmp = input_split[i];
+			var_value = env_var_value(env, tmp + 1);
+			tmp = input_split[i];
+			input_split[i] = var_value != NULL ? var_value : ft_strdup("");
+			free(tmp);
+		}
+		i++;
+	}
 	free(input);
 	return (input_split);
 }
@@ -333,7 +418,7 @@ void	cd(char **av, char **env)
 	getcwd(cwd, sizeof(cwd));
 	set_env_var(env, "PWD", cwd);
 	free(pwd);
-	free(path);
+	// either duplicate the path or dont free it.
 	/* pwd(av+i, env); */
 }
 

@@ -61,10 +61,7 @@ int main(int ac, char **av, char **sys_env)
 	count = env_var_count(sys_env);
 	i = 0;
 	while (i < (count * 2))
-	{
-		free(env[i]);
-		i++;
-	}
+		free(env[i++]);
 	free(env);
 	return (0);
 }

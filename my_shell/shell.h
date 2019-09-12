@@ -19,6 +19,13 @@
 # include "libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <signal.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <stdlib.h>
+# include <sys/wait.h>
+# include <unistd.h>
+# include <stdio.h>
 
 typedef void (*functions)();
 
@@ -43,6 +50,6 @@ void	child_process(char **argv, char **env, char *bin_path);
 void	run_bin(char **argv, char **env);
 void	which(char **env, char **argv);
 void	add_var_builtins(char **env, char **commands);
-int		is_builtins(char **env, char *command, char **split);
+int		is_builtins(char *command, char	**split);
 
 #endif

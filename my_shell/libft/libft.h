@@ -92,5 +92,5 @@ char					*ft_ifalloc(int isneg, int size);
 int						ft_max_wordlen(const char *s, char c);
 char					*ft_strtimc(const char *s, char c);
 char					*ft_strndup(const char *s, size_t n);
-int						print_form(char *form, ...);
+int						print_form(const char *form, ...);
 #endif

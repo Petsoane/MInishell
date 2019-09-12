@@ -16,8 +16,11 @@ void	parse_env_var(char **env, char **i_split);
 
 void	sigint(int i)
 {
-	ft_putstr("\b\b\b\b    \n");
-	ft_putstr(PROMPT);
+	if (i == SIGINT)
+	{
+		ft_putstr("\b\b\b\b    \n");
+		ft_putstr(PROMPT);
+	}
 }
 
 /*
@@ -60,7 +63,7 @@ void	parse_env_var(char **env, char **input_split)
 		{
 			tmp = input_split[i];
 			env_var = env_var_value(env, tmp + 1);
-			input_split[i] = env_var != NULL ? env_var : ft_strdup("abcd");
+			input_split[i] = env_var != NULL ? env_var : ft_strdup(" ");
 			free(tmp);
 		}
 		i++;

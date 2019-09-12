@@ -17,11 +17,9 @@ char	*ft_strstr(const char *h, const char *n)
 {
 	int		i;
 	int		size_n;
-	int		size_h;
 
 	i = 0;
 	size_n = ft_strlen(n);
-	size_h = ft_strlen(h);
 	if (size_n == 0)
 		return ((char *)h);
 	while (*h)

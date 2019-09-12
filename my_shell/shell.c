@@ -14,7 +14,6 @@
 
 char	**prep_env_vec(char **sys_vec);
 
-
 // i need to change the structure of my program to better traverse the input
 // vector.
 int main(int ac, char **av, char **sys_env)
@@ -23,16 +22,22 @@ int main(int ac, char **av, char **sys_env)
 	char **env;
 	int count;
 	int i;
-
 	// try moving the prep of builtin commands and functions here
 	// so as to run them once.
 
+	print_form("%s %d \r\r", av[0], ac);
 	env = prep_env_vec(sys_env);
 	while (1)
 	{
 		input_split = get_input(env);
 		if (ft_strcmp(*input_split, "exit") == 0)
+		{
+			int  i = 0;
+			while (input_split[i] != NULL)
+				free(input_split[i++]);
+			free(input_split);
 			break;
+		}
 		while (*input_split != NULL && valid_env_var(*input_split) == 1)
 		{
 			set_env(env, *input_split);
@@ -47,8 +52,10 @@ int main(int ac, char **av, char **sys_env)
 			// simply try to find the matchin binary and execute it.
 			run_bin(input_split, env);
 		}
-		while (*input_split != NULL)
-			free(*input_split++);
+		int i = 0;
+		while (input_split[i] != NULL)
+			free(input_split[i++]);
+		free(input_split);
 	}
 	// freeing the environment var vector.
 	count = env_var_count(sys_env);
@@ -58,7 +65,8 @@ int main(int ac, char **av, char **sys_env)
 		free(env[i]);
 		i++;
 	}
-	getchar();
+	free(env);
+	return (0);
 }
 
 char	**prep_env_vec(char **sys_vec)

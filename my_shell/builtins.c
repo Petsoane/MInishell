@@ -99,7 +99,7 @@ void	which(char **env, char **av)
 		split = ft_strsplit(var_value, ':');
 		while (i != ac)
 		{
-			if (is_builtins(env, av[i], split) == 1)
+			if (is_builtins(av[i], split) == 1)
 				print_form("%s: shell builtin command\n");
 			else if ((path = get_bin_path(env_var_value(env, "PATH"), av[i])) != NULL)
 			{
@@ -114,7 +114,7 @@ void	which(char **env, char **av)
 	}
 }
 
-int		is_builtins(char **env, char *command, char **split)
+int		is_builtins(char *command, char **split)
 {
 	while (*split != NULL)
 	{
@@ -155,6 +155,10 @@ void	cd(char **env, char **av)
 
 void	echo(char **env, char **av)
 {
+	char *tmp;
+
+	tmp = ft_strdup(env[0]);
+	free(tmp);
 	while (*av != NULL)
 	{
 		ft_putstr(*av);
@@ -167,6 +171,13 @@ void	echo(char **env, char **av)
 void	pwd(char **env, char **av)
 {
 	char cwd[255];
+	char *tmp;
+
+	tmp = ft_strdup(env[0] != NULL ? env[0] : " ");
+	free(tmp);
+	tmp = ft_strdup(av[0] != NULL ? av[0] : " ");
+	free(tmp);
+
 	// This is where the argument count loop or function might go.
 	if (getcwd(cwd,sizeof(cwd)) == NULL)
 		ft_putendl("Error printing the directory");

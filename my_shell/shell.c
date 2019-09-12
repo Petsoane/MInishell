@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 08:14:07 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/11 13:12:09 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/11 17:58:32 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int main(int ac, char **av, char **sys_env)
 	char **input_split;
 	char **env;
 	int count;
+	int i;
 
 	// try moving the prep of builtin commands and functions here
 	// so as to run them once.
@@ -51,7 +52,7 @@ int main(int ac, char **av, char **sys_env)
 	}
 	// freeing the environment var vector.
 	count = env_var_count(sys_env);
-	int i = 0;
+	i = 0;
 	while (i < (count * 2))
 	{
 		free(env[i]);

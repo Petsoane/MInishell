@@ -108,8 +108,10 @@ void	which(char **env, char **av)
 			}
 			i++;
 		}
-		while (*split != NULL)
-			free(*split++);
+		i  = 0;
+		while (split[i] != NULL)
+			free(split[i++]);
+		free(split);
 		free(var_value);
 	}
 }

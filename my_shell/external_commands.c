@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/06 19:56:13 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/11 13:12:08 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/13 08:03:04 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 void	sigmain(int i)
 {
-	if (i == SIGINT)
-		ft_putstr("int the external:");
+	ft_putstr("int the external:");
 	ft_putstr("\n");
 }
 
@@ -34,11 +33,11 @@ void	run_bin(char **argv, char **env)
 		if (pid == 0)
 		{
 			execve(bin_path, argv, env);
-			free(bin_path);
 			return ;
 		}
 		free(bin_path);
 		wait(NULL);
+		return ;
 	}
 	else
 	{
@@ -63,8 +62,7 @@ char	*get_bin_path(char *path_var, char *bin_name)
 		free(tmp);
 
 		tmp = out;
-		out = ft_strjoin(out, bin_name + i);
-		print_form("---------->%s\n", out);
+		out = ft_strjoin(out, bin_name);
 		free(tmp);
 		if (access(out, F_OK) == 0)
 		{

@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/06 19:56:13 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/13 08:03:04 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/16 12:52:37 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,12 @@ void	sigmain(int i)
 
 void	run_bin(char **argv, char **env)
 {
-	char *bin_path;
-	int pid;
+	char	*bin_path;
+	int		pid;
 
-	// Check to see if the function exist in the binary list
 	bin_path = get_bin_path(env_var_value(env, "PATH"), *argv);
 	if (bin_path != NULL)
 	{
-		// If found, fork a process and execute it.
 		signal(SIGINT, sigmain);
 		pid = fork();
 		if (pid == 0)
@@ -40,16 +38,13 @@ void	run_bin(char **argv, char **env)
 		return ;
 	}
 	else
-	{
 		print_form("lsh: command does not exist : %s\n", *argv);
-	}
 }
 
 char	*get_bin_path(char *path_var, char *bin_name)
 {
-	char *out;
-	char *tmp;
-	char **bin_paths;
+	char	*out;
+	char	**bin_paths;
 	int		i;
 
 	bin_paths = ft_strsplit(path_var, ':');
@@ -57,13 +52,8 @@ char	*get_bin_path(char *path_var, char *bin_name)
 	while (bin_paths[i] != NULL)
 	{
 		out = ft_strdup(bin_paths[i]);
-		tmp = out;
-		out = ft_strjoin(out, "/");
-		free(tmp);
-
-		tmp = out;
-		out = ft_strjoin(out, bin_name);
-		free(tmp);
+		clean_join(&out, "/");
+		clean_join(&out, bin_name);
 		if (access(out, F_OK) == 0)
 		{
 			while (bin_paths[i] != NULL)

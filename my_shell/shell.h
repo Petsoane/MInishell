@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/02 12:07:21 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/09 12:52:55 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/16 12:42:30 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,9 @@ void	run_bin(char **argv, char **env);
 void	which(char **env, char **argv);
 void	add_var_builtins(char **env, char **commands);
 int		is_builtins(char *command, char	**split);
+void	free_vector(char **vec, int size);
+void	clean_join(char **dst, char *src);
+char	**prep_env_vec(char **sys_vec);
+void	parse_env_var(char **env, char **input_split);
 
 #endif

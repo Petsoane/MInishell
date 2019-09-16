@@ -6,7 +6,7 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/04 07:08:54 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/09 15:12:39 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/16 12:49:08 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 ** This function gets the position an environment variable.
 */
 
-int env_var_pos(char **env, char *var_name)
+int		env_var_pos(char **env, char *var_name)
 {
-	int pos;
+	int		pos;
 
 	pos = 0;
 	while (env[pos] != NULL)
@@ -45,55 +45,6 @@ char	*env_var_value(char **env, char *var_name)
 }
 
 /*
-** This fucntion will change environment variable or add a new one
-*/
-
-void	set_env_var(char **env, char *var_name, char *val)
-{
-	int pos;
-	char *new_env_var;
-	char *tmp;
-
-	new_env_var = ft_strdup(var_name);
-	tmp = new_env_var;
-	new_env_var = ft_strjoin(tmp, "=");
-	free(tmp);
-
-	tmp = new_env_var;
-	new_env_var = ft_strjoin(tmp, val);
-	free(tmp);
-	pos = env_var_pos(env, var_name);
-	if (pos != -1)
-	{
-		tmp = env[pos];
-		env[pos] = new_env_var;
-		free(tmp);
-	}
-	else
-	{
-		pos = env_var_count(env);
-		tmp = env[pos];
-		env[pos] = new_env_var;
-		env[pos + 1] = NULL;
-		free(tmp);
-	}
-}
-
-/*
-** This function count the number of varibles in the environment.
-*/
-
-int		env_var_count(char **env)
-{
-	int ac; 
-
-	ac = 0;
-	while (env[ac] != NULL)
-		ac++;
-	return (ac);
-}
-
-/*
 ** This function prints the environment variables on the screen
 */
 
@@ -112,7 +63,7 @@ void	print_env(char **env)
 
 void	environment(char **env, char **av)
 {
-	int ac;
+	int		ac;
 
 	ac = 0;
 	while (av[ac] != NULL)
@@ -123,7 +74,7 @@ void	environment(char **env, char **av)
 
 int		valid_env_var(char *new_var)
 {
-	int valid_form;
+	int		valid_form;
 
 	valid_form = -1;
 	while (*new_var)
@@ -134,46 +85,5 @@ int		valid_env_var(char *new_var)
 			valid_form = 1;
 		new_var++;
 	}
-	return (valid_form); 
-}
-
-void	set_env(char **env, char *new_var)
-{
-	int i;
-	char *var_name;
-	char *var_val;
-
-	i = 0;
-	while (new_var[i] != '=')
-		i++;
-	var_name = ft_strndup(new_var, i);
-	var_val = ft_strdup(new_var + (i + 1));
-	set_env_var(env, var_name, var_val);
-}
-
-void	unset_env_var(char **env, char **av)
-{
-	int pos;
-	int prev;
-	char *tmp;
-
-	while (*av != NULL)
-	{
-		pos = env_var_pos(env, *av);
-		if (pos != -1)
-		{
-			tmp = env[pos];
-			prev = pos;
-			pos++;
-			while (env[pos] != NULL)
-			{
-				env[prev] = env[pos];
-				prev = pos;
-				pos++;
-			}
-			env[prev] = env[pos];
-			free(tmp);
-		}
-		av++;
-	}
+	return (valid_form);
 }

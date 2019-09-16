@@ -6,13 +6,11 @@
 /*   By: lpetsoan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/05 14:44:16 by lpetsoan          #+#    #+#             */
-/*   Updated: 2019/09/11 13:12:08 by lpetsoan         ###   ########.fr       */
+/*   Updated: 2019/09/16 12:41:37 by lpetsoan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
-
-void	parse_env_var(char **env, char **i_split);
 
 void	sigint(int i)
 {
@@ -30,13 +28,10 @@ void	sigint(int i)
 
 char	**get_input(char **env)
 {
-	char *input;
-	char **i_split;
-	/* int ret; */
+	char	*input;
+	char	**i_split;
 
 	signal(SIGINT, sigint);
-
-	/* ret = get_next_line(1, &input); */
 	ft_putstr(PROMPT);
 	while (ft_strcmp((input = readline("\b\b$>")), "") == 0)
 	{
@@ -52,9 +47,9 @@ char	**get_input(char **env)
 
 void	parse_env_var(char **env, char **input_split)
 {
-	int i;
-	char *env_var;
-	char *tmp;
+	int		i;
+	char	*env_var;
+	char	*tmp;
 
 	i = 0;
 	while (input_split[i] != NULL)
